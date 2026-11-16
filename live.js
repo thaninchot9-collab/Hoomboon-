@@ -8,11 +8,12 @@ const err=e=>alert(e&&e.message?e.message:e),esc=s=>String(s??"").replace(/[&<>"
 document.body.insertAdjacentHTML("beforeend",'<div class="m" id="mlg"><div><h3>เข้าสู่ระบบ / สมัครสมาชิก</h3><input id="l_n" placeholder="ชื่อ-นามสกุล (เฉพาะสมัครใหม่)"><input id="l_e" type="email" placeholder="อีเมล"><input id="l_p" type="password" placeholder="รหัสผ่าน (6 ตัวขึ้นไป)"><button class="g" onclick="doLogin()">เข้าสู่ระบบ</button> <button onclick="doSignup()">สมัครสมาชิก</button> <button onclick="closeM()">ปิด</button></div></div>');
 document.querySelector("header").insertAdjacentHTML("beforeend",'<button id="lb" onclick="authBtn()">เข้าสู่ระบบ</button>');
 $("ab").insertAdjacentHTML("afterbegin",'<h4>บัญชีธนาคาร/QR</h4><input id="b_bank_name" placeholder="ชื่อธนาคาร"><input id="b_bank_account" placeholder="เลขบัญชี"><input id="b_bank_holder" placeholder="ชื่อบัญชี"><label>QR Code <input type="file" id="q_i" accept="image/jpeg,image/png,image/webp"></label>');
+{const ab=document.querySelector('header button[onclick="adminOpen()"]');if(ab)ab.style.display="none"}
 window.openLogin=()=>{closeM();$("mlg").classList.add("on")};
 window.authBtn=async()=>{if(user){await sb.auth.signOut();await who();alert("ออกจากระบบแล้ว")}else openLogin()};
 window.doLogin=async()=>{const{error}=await sb.auth.signInWithPassword({email:$("l_e").value.trim(),password:$("l_p").value});if(error)return err(error);await who();closeM()};
 window.doSignup=async()=>{const{data,error}=await sb.auth.signUp({email:$("l_e").value.trim(),password:$("l_p").value,options:{data:{full_name:$("l_n").value.trim()}}});if(error)return err(error);if(!data.session)return alert("สมัครแล้ว กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ");await who();closeM()};
-async function who(){const{data:{session}}=await sb.auth.getSession();user=session?session.user:null;isAdm=false;if(user){const{data}=await sb.from("profiles").select("role").eq("id",user.id).maybeSingle();isAdm=!!data&&data.role==="admin"}$("lb").textContent=user?"ออกจากระบบ":"เข้าสู่ระบบ"}
+async function who(){const{data:{session}}=await sb.auth.getSession();user=session?session.user:null;isAdm=false;if(user){const{data}=await sb.from("profiles").select("role").eq("id",user.id).maybeSingle();isAdm=!!data&&data.role==="admin"}$("lb").textContent=user?"ออกจากระบบ":"เข้าสู่ระบบ";const ab=document.querySelector('header button[onclick="adminOpen()"]');if(ab)ab.style.display=isAdm?"":"none"}
 async function load(){
  const[c,p,im,d,s,st]=await Promise.all([sb.from("categories").select("*"),sb.from("products").select("*").eq("active",true).order("created_at",{ascending:false}),sb.from("product_images").select("*").order("sort"),sb.from("deposit_settings").select("*").maybeSingle(),sb.from("shipping_settings").select("*").maybeSingle(),sb.from("store_settings").select("*").maybeSingle()]);
  if(p.error)return err(p.error);
@@ -55,3 +56,4 @@ window.addP=async()=>{const n=$("n_n").value.trim(),p=+$("n_p").value,s=+$("n_s"
  await load()};
 sb.auth.onAuthStateChange(()=>who());await who();await load();
 })();
+
