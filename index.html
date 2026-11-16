@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>โฮมบุญสังฆภัณฑ์ | HOMEBOON SANGKHAPHAN</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--g:#c8921a;--o:#e8801a;--c:#fff8e7;--d:#4a2c0a;--w:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Sarabun,sans-serif;background:var(--c);color:var(--d)}
+#intro{position:fixed;inset:0;z-index:99;background:linear-gradient(160deg,#fff3cf,#f6b94a 60%,#e8801a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .6s}
+#intro img{width:min(62vw,300px);border-radius:50%;animation:in 1.2s both;box-shadow:0 0 40px #fff9}
+#bar{width:min(70vw,280px);height:8px;background:#fff7;border-radius:9px;overflow:hidden}#bar i{display:block;height:100%;width:0;background:var(--d);transition:width .3s}
+.spin{width:28px;height:28px;border:4px solid #fff;border-top-color:var(--d);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}@keyframes in{from{opacity:0;transform:scale(.8)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(90deg,#c8921a,#e8801a);color:#fff;display:flex;gap:8px;align-items:center;padding:8px 12px;flex-wrap:wrap}
+header img{height:42px;border-radius:50%}header b{font-size:1.1rem}
+header input{flex:1;min-width:140px;padding:9px;border-radius:20px;border:0;font:inherit}
+button{font:inherit;cursor:pointer;border:0;border-radius:20px;padding:9px 16px;background:var(--d);color:#fff}
+button.g{background:var(--g)}button.s{padding:5px 10px;font-size:.85rem}
+.hero{text-align:center;padding:24px 14px;background:linear-gradient(#fff3cf,var(--c))}.hero img{width:min(80vw,260px);border-radius:50%}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px}.chips button{white-space:nowrap;background:#fff;color:var(--d);border:1px solid var(--g)}.chips .on{background:var(--g);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:12px;max-width:1100px;margin:auto}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px #0002;display:flex;flex-direction:column}
+.card .im{aspect-ratio:1;background:linear-gradient(135deg,#ffe6a8,#f6b94a);display:flex;align-items:center;justify-content:center;font-size:3rem}.card .im img{width:100%;height:100%;object-fit:cover}
+.card div.t{padding:8px;flex:1}.tag{font-size:.7rem;background:var(--o);color:#fff;border-radius:8px;padding:1px 6px}
+.m{position:fixed;inset:0;background:#0007;z-index:50;display:none;align-items:flex-end;justify-content:center}.m.on{display:flex}
+.m>div{background:#fff;width:min(560px,100%);max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px}
+.m input,.m select,.m textarea{width:100%;padding:9px;margin:4px 0;border:1px solid #d9b25a;border-radius:8px;font:inherit}
+.row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:4px 0}
+#banner{background:#fde7b0;text-align:center;font-size:.85rem;padding:5px}
+footer{text-align:center;padding:20px;background:var(--d);color:#fff}
+</style></head><body>
+<div id="intro"><img src="logo.jpg" alt="โฮมบุญสังฆภัณฑ์"><div class="spin"></div><div id="ld">กำลังโหลด...</div><div id="bar"><i></i></div><button class="g" onclick="endIntro()">ข้าม Intro</button></div>
+<div id="banner">โหมดทดลองใช้ — ข้อมูลตัวอย่างเก็บในเครื่องนี้เท่านั้น ยังไม่ได้เชื่อมต่อ Supabase</div>
+<header><img src="logo.jpg" alt=""><b>โฮมบุญสังฆภัณฑ์</b><input id="q" placeholder="ค้นหาสินค้า..." oninput="draw()"><button class="g" onclick="openM('mc')">🛒 <span id="cn">0</span></button><button onclick="openM('mo')">คำสั่งซื้อ</button><button onclick="adminOpen()">Admin</button></header>
+<section class="hero"><img src="logo.jpg" alt=""><h2>สินค้าครบครัน บริการท่านด้วยหัวใจ</h2><p>กองบุญ กองบวช กองกฐิน ผ้าไตร ธูป เทียน เครื่องใช้ในงานบุญทุกชนิด<br>โทร 085-0158084, 083-1967699</p></section>
+<div class="chips" id="chips"></div><div class="grid" id="grid"></div>
+<footer>© โฮมบุญสังฆภัณฑ์ · 085-0158084 · 083-1967699</footer>
+
+<div class="m" id="mc"><div><h3>ตะกร้าสินค้า</h3><div id="cl"></div><hr><div id="cs"></div><button class="g" onclick="openM('mk')">ไปชำระเงิน</button> <button onclick="closeM()">ปิด</button></div></div>
+
+<div class="m" id="mk"><div><h3>ข้อมูลจัดส่ง</h3>
+<input id="f_n" placeholder="ชื่อ-นามสกุล *"><input id="f_p" placeholder="เบอร์โทร *" inputmode="tel"><input id="f_l" placeholder="LINE ID (ไม่บังคับ)">
+<input id="f_a" placeholder="บ้านเลขที่ *"><input id="f_v" placeholder="หมู่บ้าน/หมู่ที่"><input id="f_t" placeholder="ตำบล/แขวง *"><input id="f_d" placeholder="อำเภอ/เขต *"><input id="f_pv" placeholder="จังหวัด *"><input id="f_z" placeholder="รหัสไปรษณีย์ *" inputmode="numeric"><textarea id="f_r" placeholder="หมายเหตุ"></textarea>
+<select id="f_pay"></select><div id="pi" style="font-size:.9rem"></div>
+<label>แนบสลิป (กรณีโอน) <input type="file" id="f_s" accept="image/jpeg,image/png,image/webp"></label>
+<button class="g" onclick="order()">ยืนยันสั่งซื้อ</button> <button onclick="closeM()">ยกเลิก</button></div></div>
+
+<div class="m" id="mo"><div><h3>คำสั่งซื้อของฉัน</h3><div id="ol"></div><button onclick="closeM()">ปิด</button></div></div>
+
+<div class="m" id="ma"><div><h3>Admin (โหมดทดลอง)</h3>
+<div id="al"><input id="ap" type="password" placeholder="รหัสทดลอง: admin"><button class="g" onclick="alogin()">เข้าสู่ระบบ</button></div>
+<div id="ab" style="display:none">
+<h4>ตั้งค่า</h4><label>มัดจำ (%) <input id="s_dep" type="number" min="0" max="100"></label><label>ค่าจัดส่ง (บาท) <input id="s_ship" type="number" min="0"></label><label><input type="checkbox" id="s_cod" style="width:auto"> เปิด COD</label><button class="s g" onclick="saveS()">บันทึกตั้งค่า</button>
+<h4>เพิ่มสินค้า</h4><input id="n_n" placeholder="ชื่อสินค้า"><input id="n_p" type="number" placeholder="ราคา"><input id="n_s" type="number" placeholder="สต็อก"><select id="n_c"></select><input type="file" id="n_i" accept="image/jpeg,image/png,image/webp" onchange="prev()"><div id="pv"></div><div id="up"></div><button class="s g" onclick="addP()">เพิ่มสินค้า</button>
+<h4>คำสั่งซื้อ</h4><div id="ao"></div></div><button onclick="closeM()">ปิด</button></div></div>
+
+<script>
+// ใส่ค่า Supabase ที่นี่ (เฉพาะ URL และ anon key เท่านั้น) — ยังไม่ได้เชื่อมต่อในไฟล์นี้
+const SUPABASE={url:"",anon:""};
+const CATS=["ชุดสังฆทาน","เครื่องบวช","ผ้าไตรจีวร","บาตรพระ","เครื่องใช้พระสงฆ์","ธูปเทียน","อุปกรณ์งานบุญ","ของชำร่วย","อุปกรณ์พิธีทางศาสนา"];
+const ICO=["🎁","🙏","🧣","🥣","🪔","🕯️","📿","🌸","🛕"];
+const L=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let P=L("hb_p",null);if(!P){P=[];CATS.forEach((c,i)=>[1,2,3,4].forEach(j=>P.push({id:"P"+(i*4+j),n:c+" แบบที่ "+j,c:i,p:(i+1)*50*j+100,s:20,rec:j==1,best:j==2,img:""})));S("hb_p",P)}
+let ST=L("hb_s",{dep:30,ship:50,cod:true}),cart=L("hb_c",{}),O=L("hb_o",[]),cat=-1,isA=false;
+const $=i=>document.getElementById(i),B=n=>"฿"+n.toLocaleString("th-TH");
+function openM(i){closeM();$(i).classList.add("on");if(i=="mc")dc();if(i=="mk")dk();if(i=="mo")dO()}
+function closeM(){document.querySelectorAll(".m").forEach(m=>m.classList.remove("on"))}
+function endIntro(){$("intro").style.opacity=0;setTimeout(()=>$("intro").remove(),600);sessionStorage.hb=1}
+(function(){if(sessionStorage.hb){$("intro").remove();return}let p=0,t=setInterval(()=>{p+=12;$("bar").firstChild.style.width=Math.min(p,100)+"%";if(p>=100){clearInterval(t);$("ld").textContent="พร้อมแล้ว";setTimeout(endIntro,400)}},300)})();
+function draw(){$("chips").innerHTML=['<button class="'+(cat<0?"on":"")+'" onclick="cat=-1;draw()">ทั้งหมด</button>'].concat(CATS.map((c,i)=>`<button class="${cat==i?"on":""}" onclick="cat=${i};draw()">${c}</button>`)).join("");
+const q=$("q").value.trim();$("grid").innerHTML=P.filter(p=>(cat<0||p.c==cat)&&p.n.includes(q)).map(p=>`<div class="card"><div class="im">${p.img?`<img src="${p.img}" onerror="this.replaceWith('${ICO[p.c]}')">`:ICO[p.c]}</div><div class="t">${p.rec?'<span class="tag">แนะนำ</span> ':""}${p.best?'<span class="tag">ขายดี</span>':""}<div>${p.n}</div><b>${B(p.p)}</b><div style="font-size:.8rem">คงเหลือ ${p.s}</div></div><button class="g" ${p.s<1?"disabled":""} onclick="add('${p.id}')">${p.s<1?"หมด":"หยิบใส่ตะกร้า"}</button></div>`).join("")||"<p>ไม่พบสินค้า</p>";$("cn").textContent=Object.values(cart).reduce((a,b)=>a+b,0)}
+function add(id){const p=P.find(x=>x.id==id);if((cart[id]||0)>=p.s)return alert("สินค้าไม่พอ");cart[id]=(cart[id]||0)+1;S("hb_c",cart);draw()}
+function chg(id,d){const p=P.find(x=>x.id==id);cart[id]=Math.min(p.s,(cart[id]||0)+d);if(cart[id]<=0)delete cart[id];S("hb_c",cart);dc();draw()}
+function tot(){const sub=Object.entries(cart).reduce((a,[i,q])=>a+P.find(x=>x.id==i).p*q,0),sh=sub?ST.ship:0,tt=sub+sh;return{sub,sh,tt,dep:Math.ceil(tt*ST.dep/100)}}
+function dc(){const t=tot();$("cl").innerHTML=Object.entries(cart).map(([i,q])=>{const p=P.find(x=>x.id==i);return`<div class="row"><span>${p.n}<br>${B(p.p)}</span><span><button class="s" onclick="chg('${i}',-1)">−</button> ${q} <button class="s" onclick="chg('${i}',1)">+</button></span></div>`}).join("")||"ตะกร้าว่าง";
+$("cs").innerHTML=`<div class="row">ค่าสินค้า<b>${B(t.sub)}</b></div><div class="row">ค่าจัดส่ง<b>${B(t.sh)}</b></div><div class="row">รวม<b>${B(t.tt)}</b></div><div class="row">ยอดมัดจำ (${ST.dep}%)<b>${B(t.dep)}</b></div><div class="row">ยอดคงเหลือ<b>${B(t.tt-t.dep)}</b></div>`}
+function dk(){if(!Object.keys(cart).length){closeM();return alert("ตะกร้าว่าง")}$("f_pay").innerHTML='<option value="transfer">โอนเงิน</option>'+(ST.cod?'<option value="cod">เก็บเงินปลายทาง (COD)</option>':"");const t=tot();$("pi").innerHTML=`ชำระมัดจำ ${B(t.dep)} · คงเหลือ ${B(t.tt-t.dep)}<br>โอนที่: (Admin ตั้งค่าบัญชี/QR ใน Supabase — ยังไม่ได้ตั้งค่า)`}
+function order(){const g=i=>$(i).value.trim();if(!["f_n","f_p","f_a","f_t","f_d","f_pv","f_z"].every(i=>g(i)))return alert("กรอกข้อมูลที่มี * ให้ครบ");
+if(!/^0\d{8,9}$/.test(g("f_p")))return alert("เบอร์โทรไม่ถูกต้อง");if(!/^\d{5}$/.test(g("f_z")))return alert("รหัสไปรษณีย์ 5 หลัก");
+for(const[i,q]of Object.entries(cart)){if(P.find(x=>x.id==i).s<q)return alert("สต็อกไม่พอ")}
+const t=tot(),items=Object.entries(cart).map(([i,q])=>{const p=P.find(x=>x.id==i);p.s-=q;return{id:i,n:p.n,p:p.p,q}});
+const o={no:"HB"+Date.now().toString().slice(-8),items,...t,pay:g("f_pay")==="cod"?"cod":"transfer",st:"รอตรวจสอบการชำระเงิน",slip:!!$("f_s").files[0],name:g("f_n"),addr:[g("f_a"),g("f_v"),g("f_t"),g("f_d"),g("f_pv"),g("f_z")].join(" ")};
+if(o.pay=="cod")o.st="รอชำระเงิน";O.unshift(o);cart={};S("hb_o",O);S("hb_p",P);S("hb_c",cart);draw();openM("mo");alert("สั่งซื้อสำเร็จ เลขที่ "+o.no)}
+function dO(){$("ol").innerHTML=O.map(o=>`<div style="border-bottom:1px solid #eee;padding:6px 0"><b>${o.no}</b> · ${o.st}<br>รวม ${B(o.tt)} · มัดจำ ${B(o.dep)} · คงเหลือ ${B(o.tt-o.dep)}</div>`).join("")||"ยังไม่มีคำสั่งซื้อ"}
+function adminOpen(){openM("ma");$("n_c").innerHTML=CATS.map((c,i)=>`<option value="${i}">${c}</option>`).join("");if(isA)ashow()}
+function alogin(){if($("ap").value==="admin"){isA=true;ashow()}else alert("รหัสไม่ถูกต้อง")}
+function ashow(){$("al").style.display="none";$("ab").style.display="block";$("s_dep").value=ST.dep;$("s_ship").value=ST.ship;$("s_cod").checked=ST.cod;
+const sts=["รอชำระเงิน","รอตรวจสอบการชำระเงิน","ชำระเงินแล้ว","กำลังเตรียมสินค้า","จัดส่งแล้ว","สำเร็จ","ยกเลิก"];
+$("ao").innerHTML=O.map((o,i)=>`<div class="row"><span>${o.no} ${o.name}<br>${B(o.tt)} ${o.slip?"📎สลิป":""}</span><select style="width:auto" onchange="O[${i}].st=this.value;S('hb_o',O)">${sts.map(s=>`<option ${s==o.st?"selected":""}>${s}</option>`).join("")}</select></div>`).join("")||"ไม่มีคำสั่งซื้อ"}
+function saveS(){ST={dep:Math.min(100,Math.max(0,+$("s_dep").value)),ship:Math.max(0,+$("s_ship").value),cod:$("s_cod").checked};S("hb_s",ST);alert("บันทึกแล้ว")}
+function chk(f){if(!f)return"";if(!["image/jpeg","image/png","image/webp"].includes(f.type))return"รองรับเฉพาะ JPG/PNG/WEBP";if(f.size>5242880)return"ไฟล์เกิน 5 MB";return""}
+function prev(){const f=$("n_i").files[0],e=chk(f);if(e){$("n_i").value="";return alert(e)}if(f)$("pv").innerHTML=`<img src="${URL.createObjectURL(f)}" width="90">`}
+function addP(){const n=$("n_n").value.trim(),p=+$("n_p").value,s=+$("n_s").value;if(!n||p<=0||s<0)return alert("กรอกข้อมูลสินค้าให้ถูกต้อง");const f=$("n_i").files[0];
+const fin=img=>{P.unshift({id:"P"+Date.now(),n,c:+$("n_c").value,p,s,rec:false,best:false,img});try{S("hb_p",P)}catch(e){P.shift();return alert("พื้นที่เก็บเต็ม")}$("up").textContent="อัปโหลดสำเร็จ 100%";draw()};
+if(!f)return fin("");const r=new FileReader();r.onprogress=e=>$("up").textContent="กำลังอัปโหลด "+Math.round(e.loaded/e.total*100)+"%";r.onload=()=>fin(r.result);r.onerror=()=>alert("อ่านไฟล์ไม่สำเร็จ");r.readAsDataURL(f)}
+draw();
+</script>
+<script src="live.js"></script></body></html>
